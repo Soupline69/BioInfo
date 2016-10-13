@@ -1,12 +1,15 @@
 package main;
 
-public class Main {
+import model.Matrice;
+import model.Position;
+
+public class Main2 {
 
 	public static void main(String[] args) {
 		// 1. Faire l'alignement semi-global avec deux fragments tels que :
 		
-		String f1 = "GTTCAAATCGGGCTT"; //AGCTTC // F1 = ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
-		String f2 = "CCAAGTCAAGTCGG"; // AGTCAGTGCGTGC // F2 = ATCGGCATTCAGT // CAGCGTGG
+		String f1 = "CCAAGTCAAGTCGG"; //AGCTTC // ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
+		String f2 = "GTTCAAATCGGGCTT"; // AGTCAGTGCGTGC // ATCGGCATTCAGT // CAGCGTGG
 		
 		System.out.println("f1 : "+f1.length()+" f2 : "+f2.length());
 		if(f1.length() < f2.length()) { // Permet de toujours avoir le fragment le plus long sur les lignes
@@ -16,57 +19,16 @@ public class Main {
 		}
 		System.out.println("f1 : "+f1.length()+" f2 : "+f2.length());
 		
-		int[][] m = new int[f1.length() + 1][f2.length() + 1];
 		
-		// Pour obtenir la matrice de l'exemple du pdf, ce serait la première étape // OK // 15/6 ou 6/15
+		Matrice m = new Matrice(f1, f2);
+		Position maxPosition = m.maxMatrice();
 		
-		// Calculer le résultat de la matrice
-		for(int i = 1; i < f1.length() + 1; i++) {
-			for(int j = 1; j < f2.length() + 1; j++) {
-				m[i][j] = max(
-							m[i-1][j] - 2, // Faire une constante avec le score d'un GAP
-							m[i][j-1] - 2,
-							m[i-1][j-1] + match(f1.charAt(i-1), f2.charAt(j-1))
-						);
-			}
-		}
-		
-		// Afficher le résultat de la matrice 
-	/*	for(int i = 0; i < f1.length() + 1; i++) {
-			for(int j = 0; j < f2.length() + 1; j++) {		
-				System.out.print(m[i][j]+"  ");
-			}
-			System.out.println("");
-		}*/
-		
-		// Trouver le maximum de la dernière ligne/dernière colonne et l'afficher
-		// Colonne max
-		int maxColonne = 0;
-		int ligne = -1;
-		for(int i = 0; i < f1.length() + 1; i++) {	
-			int comp = m[i][f2.length()];
-			if(comp > maxColonne) {
-				maxColonne = comp;
-				ligne = i;
-			}
-		}
-		// Ligne max
-		int maxLigne = 0;
-		int colonne = -1;
-		for(int i = 0; i < f2.length() + 1; i++) {	
-			int comp = m[f1.length()][i];
-			if(comp > maxLigne) {
-				maxLigne = comp;
-				colonne = i;
-			}
-		}
-		
-		if(maxLigne > maxColonne) {
-			System.out.println("\n\nLe maximum est en ["+(f1.length())+"]["+colonne+"] avec "+maxLigne+" (ligne)");
-			alignementLigne(f1, f2, f1.length(), colonne, m);
+		if(maxPosition.getX() == m.getCountLigne() - 1) {
+			System.out.println("\n\nLe maximum est en ["+(m.getCountLigne() - 1)+"]["+maxPosition.getY()+"] (ligne)");
+			alignementLigne(f1, f2, f1.length(), maxPosition.getY(), m.getMatrice());
 		} else {
-			System.out.println("\n\nLe maximum est en ["+ligne+"]["+(f2.length())+"] avec "+maxColonne+" (colonne)");
-			alignementColonne(f1, f2, ligne, f2.length(), m);
+			System.out.println("\n\nLe maximum est en ["+maxPosition.getX()+"]["+(m.getCountColonne() - 1)+"] (colonne)");
+			alignementColonne(f1, f2, maxPosition.getX(), f2.length(), m.getMatrice());
 		}
 	}
 
@@ -87,7 +49,10 @@ public class Main {
 			} else if(m[li][col] == m[li][col-1] - 2) { // Gap
 				temp = "-" + temp;
 			} else if(m[li][col] == m[li-1][col] - 2) { // Gap
-				temp = "-" + temp;
+				temp = f1.charAt(li) + temp;
+				String localBegin = f2.substring(0, col);
+				String localEnd = f2.substring(col);
+				f2 = localBegin + "-" + localEnd;
 				li--;
 			}
 			
@@ -102,23 +67,16 @@ public class Main {
 		}
 		
 		if(li == 0 && col != 0) {
-			for(int i = 0; i < col; i++) {
+			for(int i = 0; i < col+1; i++) {
 				temp = "-" + temp;
 			}
 		}
-		
-		
-		
-		System.out.println("colonne : "+col + " ligne : "+li);
-
 		
 		f1 = temp; 
 		
 		System.out.println("\n\n");
 		System.out.println(f1 + "    " + f1.length());
 		System.out.println(f2 + "    " + f2.length());
-		
-		
 	}
 	
 	public static void alignementLigne(String f1, String f2, int ligne, int colonne, int[][] m) {
@@ -136,8 +94,11 @@ public class Main {
 				col--;
 			} else if(m[li][col] == m[li-1][col] - 2) { // Gap
 				temp = "-" + temp;
-			} else if(m[li][col] == m[li][col-1] - 2) { // Gap
-				temp = "-" + temp;
+			} else if(m[li][col] == m[li][col-1] - 2) { // Gap // VERIFIER ICI QUAND TU VAS SUR LE COTE
+				temp = f2.charAt(col) + temp;
+				String localBegin = f1.substring(0, li);
+				String localEnd = f1.substring(li);
+				f1 = localBegin + "-" + localEnd;
 				col--;
 			}
 			
@@ -157,16 +118,6 @@ public class Main {
 		System.out.println(f2 + "    " + f2.length());
 	}
 	
-	public static int max(int a, int b, int c) {
-		if(a >= b && a >= c) {
-			return a;
-		} else if(b >= a && b >= c) {
-			return b;
-		} else {
-			return c;
-		}
-	}
-	
 	public static int match(char a, char b) {
 		if(a == b) {
 			return 1;
@@ -174,5 +125,6 @@ public class Main {
 			return -1;
 		}
 	}
+	
 
 }
