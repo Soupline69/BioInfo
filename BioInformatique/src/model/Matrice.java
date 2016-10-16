@@ -51,10 +51,10 @@ public class Matrice {
 		}
 	}
 	
-	public Position maxMatrice() {
-		// max Colonne
+	public Position maxColonne() {
 		int maxColonne = 0;
 		int ligne = -1;
+		
 		for(int i = 0; i < countLigne; i++) {	
 			int comp = m[i][countColonne - 1];
 			if(comp > maxColonne) {
@@ -62,9 +62,14 @@ public class Matrice {
 				ligne = i;
 			}
 		}
-		// max Ligne
+		
+		return new Position(maxColonne, ligne);
+	}
+	
+	public Position maxLigne() {
 		int maxLigne = 0;
 		int colonne = -1;
+		
 		for(int i = 0; i < countColonne; i++) {	
 			int comp = m[countLigne - 1][i];
 			if(comp > maxLigne) {
@@ -72,8 +77,15 @@ public class Matrice {
 				colonne = i;
 			}
 		}
+		
+		return new Position(maxLigne, colonne);
+	}
+	
+	public Position maxMatrice() {
+		Position maxColonne = maxColonne();
+		Position maxLigne = maxLigne();
 
-		return maxLigne > maxColonne ? new Position(countLigne - 1, colonne) : new Position(ligne, countColonne - 1);
+		return maxLigne.getX() > maxColonne.getX() ? new Position(countLigne - 1, maxLigne.getY()) : new Position(maxColonne.getY(), countColonne - 1);
 	}
 	
 	public int getCountLigne() {

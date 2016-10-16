@@ -8,8 +8,8 @@ public class Main2 {
 	public static void main(String[] args) {
 		// 1. Faire l'alignement semi-global avec deux fragments tels que :
 		
-		String f1 = "CCAAGTCAAGTCGG"; //AGCTTC // ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
-		String f2 = "GTTCAAATCGGGCTT"; // AGTCAGTGCGTGC // ATCGGCATTCAGT // CAGCGTGG
+		String f1 = "CAGCACTTGGATTCTCGG"; //AGCTTC // ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
+		String f2 = "CAGCGTGG"; // AGTCAGTGCGTGC // ATCGGCATTCAGT // CAGCGTGG
 		
 		System.out.println("f1 : "+f1.length()+" f2 : "+f2.length());
 		if(f1.length() < f2.length()) { // Permet de toujours avoir le fragment le plus long sur les lignes
@@ -54,10 +54,13 @@ public class Main2 {
 				String localEnd = f2.substring(col);
 				f2 = localBegin + "-" + localEnd;
 				li--;
+				col++;
 			}
 			
 			col--;
 		}
+		
+		System.out.println("colonne : "+col+" ligne : "+li);
 
 		if(col == 0 && li != 0) {
 			temp = f1.substring(0, li) + temp;
@@ -67,7 +70,7 @@ public class Main2 {
 		}
 		
 		if(li == 0 && col != 0) {
-			for(int i = 0; i < col+1; i++) {
+			for(int i = 0; i < col; i++) {
 				temp = "-" + temp;
 			}
 		}
@@ -89,27 +92,43 @@ public class Main2 {
 		}
 				
 		while(col > 0 && li > 0) {
+			System.out.println("F1 : "+ f1.charAt(li-1)+" F2 : "+ f2.charAt(col-1));
 			if(m[li][col] == m[li-1][col-1] + match(f1.charAt(li-1), f2.charAt(col-1))) { // provient de la diagonale 
-				temp = f1.charAt(li-1) + temp;
+				System.out.println("on passe match/mismatch");
+				temp = match(f1.charAt(li-1), f2.charAt(col-1)) == 1 ? f1.charAt(li-1) + temp : f2.charAt(col-1) + temp;
 				col--;
 			} else if(m[li][col] == m[li-1][col] - 2) { // Gap
 				temp = "-" + temp;
+				System.out.println("on passe gap en haut");
 			} else if(m[li][col] == m[li][col-1] - 2) { // Gap // VERIFIER ICI QUAND TU VAS SUR LE COTE
-				temp = f2.charAt(col) + temp;
+				temp = f2.charAt(col-1) + temp;
 				String localBegin = f1.substring(0, li);
 				String localEnd = f1.substring(li);
 				f1 = localBegin + "-" + localEnd;
 				col--;
+				li++;
+				System.out.println("on passe gap à gauche "+f1);
 			}
 			
 			li--;
 		}
+		
+		System.out.println("colonne : "+col+" ligne : "+li);
+
+		// Tester quand ligne = 0
 		
 		if(col == 0 && li != 0) {
 			for(int i = 0; i < li; i++) {
 				temp = "-" + temp;
 			}
 		} 
+		
+		if(li == 0 && col != 0) {
+			temp = f2.substring(0, li) + temp;
+			for(int i = 0; i < li; i++) {
+				f1 = "-" + f1;
+			}
+		}
 		
 		f2 = temp;
 		
