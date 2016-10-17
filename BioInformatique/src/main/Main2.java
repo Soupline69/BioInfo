@@ -1,14 +1,18 @@
 package main;
 
+import model.Controller;
 import model.Matrice;
+import model.Model;
 import model.Position;
 
 public class Main2 {
 
 	public static void main(String[] args) {
+		new Controller(new Model("fragments/10000/collection1.fasta"));
+		
 		// 1. Faire l'alignement semi-global avec deux fragments tels que :
 		
-		String f1 = "CAGCACTTGGATTCTCGG"; //AGCTTC // ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
+		/*String f1 = "CAGCACTTGGATTCTCGG"; //AGCTTC // ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
 		String f2 = "CAGCGTGG"; // AGTCAGTGCGTGC // ATCGGCATTCAGT // CAGCGTGG
 		
 		System.out.println("f1 : "+f1.length()+" f2 : "+f2.length());
@@ -29,7 +33,7 @@ public class Main2 {
 		} else {
 			System.out.println("\n\nLe maximum est en ["+maxPosition.getX()+"]["+(m.getCountColonne() - 1)+"] (colonne)");
 			alignementColonne(f1, f2, maxPosition.getX(), f2.length(), m.getMatrice());
-		}
+		}*/
 	}
 
 	public static void alignementColonne(String f1, String f2, int ligne, int colonne, int[][] m) {
@@ -84,12 +88,13 @@ public class Main2 {
 	
 	public static void alignementLigne(String f1, String f2, int ligne, int colonne, int[][] m) {
 		String temp = f2.substring(colonne);
-		int col = colonne;
-		int li = ligne;
 		
-		for(int i = 0; i < f2.length() - col; i++) {
+		for(int i = 0; i < temp.length(); i++) {
 			f1 = f1.concat("-");
 		}
+		
+		int col = colonne;
+		int li = ligne;
 				
 		while(col > 0 && li > 0) {
 			System.out.println("F1 : "+ f1.charAt(li-1)+" F2 : "+ f2.charAt(col-1));

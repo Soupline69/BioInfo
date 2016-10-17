@@ -12,7 +12,7 @@ public class Matrice {
 		calcul(f1, f2);
 	}
 	
-	public void calcul(String f1, String f2) {
+	private void calcul(String f1, String f2) {
 		for(int i = 1; i < countLigne; i++) {
 			for(int j = 1; j < countColonne; j++) {
 				m[i][j] = max(
@@ -24,7 +24,7 @@ public class Matrice {
 		}
 	}
 	
-	public int max(int a, int b, int c) {
+	private int max(int a, int b, int c) {
 		if(a >= b && a >= c) {
 			return a;
 		} else if(b >= a && b >= c) {
@@ -49,6 +49,13 @@ public class Matrice {
 			}
 			System.out.println("");
 		}
+	}
+	
+	public Position maxMatrice() {
+		Position maxColonne = maxColonne();
+		Position maxLigne = maxLigne();
+
+		return maxLigne.getX() > maxColonne.getX() ? new Position(countLigne - 1, maxLigne.getY()) : new Position(maxColonne.getY(), countColonne - 1);
 	}
 	
 	public Position maxColonne() {
@@ -79,13 +86,6 @@ public class Matrice {
 		}
 		
 		return new Position(maxLigne, colonne);
-	}
-	
-	public Position maxMatrice() {
-		Position maxColonne = maxColonne();
-		Position maxLigne = maxLigne();
-
-		return maxLigne.getX() > maxColonne.getX() ? new Position(countLigne - 1, maxLigne.getY()) : new Position(maxColonne.getY(), countColonne - 1);
 	}
 	
 	public int getCountLigne() {

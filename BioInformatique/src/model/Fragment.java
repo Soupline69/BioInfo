@@ -1,6 +1,6 @@
 package model;
 
-public class Fragment {
+public class Fragment { // = un string quoi
 	private String value;
 	
 	public Fragment(String value) {
@@ -9,10 +9,6 @@ public class Fragment {
 	
 	public String getValue() {
 		return value;
-	}
-	
-	public int getSize() {
-		return value.length();
 	}
 
 }

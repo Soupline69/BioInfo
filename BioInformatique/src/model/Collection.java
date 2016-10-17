@@ -3,13 +3,13 @@ package model;
 import java.util.List;
 
 public class Collection {
-	private List<Fragment> fragments;
+	private List<String> fragments;
 	
-	public Collection(List<Fragment> fragments) {
+	public Collection(List<String> fragments) {
 		this.fragments = fragments;
 	}
 	
-	public List<Fragment> getFragments() {
+	public List<String> getFragments() {
 		return fragments;
 	}
 	
@@ -17,6 +17,6 @@ public class Collection {
 	
 	// Imaginons que nous ayons f1, f2 faire l'aligment semi global entre
 	
-	// f1/f2, f1/f2ci, f2/f1, f2/f1ci, f1ci/f2, f1ci/f2ci, f2ci/f1, f2ci/f1ci
+	// f1/f2, f1/f2ci, f1ci/f2, f1ci/f2ci
 	
 }

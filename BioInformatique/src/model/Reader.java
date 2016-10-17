@@ -12,8 +12,8 @@ public class Reader {
 		return new Collection(getFragments(getBuffer(file)));
 	}
 	
-	private static List<Fragment> getFragments(BufferedReader buffer) {
-		List<Fragment> fragments = new ArrayList<>();
+	private static List<String> getFragments(BufferedReader buffer) {
+		List<String> fragments = new ArrayList<>();
 		
 		Iterator<String> it = buffer.lines().iterator();
 		it.next();
@@ -26,7 +26,7 @@ public class Reader {
 				current = it.next();
 			}
 				
-			fragments.add(new Fragment(fragment));
+			fragments.add(fragment);
 		}
 		
 		return fragments;
