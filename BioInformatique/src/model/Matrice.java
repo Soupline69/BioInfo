@@ -17,7 +17,7 @@ public class Matrice {
 	 */
 	public Position calcul(String f1, String f2, int gap) {
 		Position posMax = new Position(-1, -1);
-		int max = 0;
+		int max = 0; 
 		
 		for(int i = 1; i < countLigne; i++) {
 			for(int j = 1; j < countColonne; j++) {
@@ -37,7 +37,7 @@ public class Matrice {
 			}
 		}
 		
-		return posMax;
+		return max == 0 ? new Position(countLigne - 1, 0) : posMax;
 	}
 	
 	/**
@@ -61,14 +61,14 @@ public class Matrice {
 		return a == b ? 1 : -1;
 	}
 	
-	/*public void display() {
+	public void display() {
 		for(int i = 0; i < countLigne; i++) {
 			for(int j = 0; j < countColonne; j++) {		
 				System.out.print(m[i][j]+"  ");
 			}
 			System.out.println("");
 		}
-	}*/
+	}
 	
 	public int getCountLigne() {
 		return countLigne;

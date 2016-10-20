@@ -5,8 +5,22 @@ public class Main {
 	public static void main(String[] args) {
 		// 1. Faire l'alignement semi-global avec deux fragments tels que :
 		
-		String f1 = "GTTCAAATCGGGCTT"; //AGCTTC // F1 = ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
-		String f2 = "CCAAGTCAAGTCGG"; // AGTCAGTGCGTGC // F2 = ATCGGCATTCAGT // CAGCGTGG
+		String f1 = "ccacggttaggcccgtggccgccacgcccgcctcccgtcaggatccgccccctcccggagggctcccctgggggaggaca"
+				+ "agcgccaggagttgtccaggctcaagccctcgggaactaccaacctcccctcgggcctcccaaaacccggttgtcagggc"
+				+ "gggaaaacccagcccccaagtggcgctgaggtcctgatccggtccagcctttcggtacagagcgccttcacgtcgccgcg"
+				+ "tgggacaccgccgggtgaggacgaccccgaacgctagccccgcgcgtgaccaactcgcctggtctccccctccagcacgg"
+				+ "gggcttatcgcgccagcccctcgggatcttccccctacgagccggcgtttcgtcacccctacgggcttctcccgtcatcc"
+				+ "gggcccccacccgtcagggagctgccgcctggaggttcccccgttagtctgcccctacaacccgggccgcctgacccagc"
+				+ "ggcccagcgcggtttccgcaaaccggatccccccaccctacgaggttccaagagctcggttagggggggccgcgacgggc"
+				+ "gtggcgtccatcggcaccggtacttccccgcagggggtttctcaccccca"; //AGCTTC // F1 = ATTAGACCATGCGGC // CAGCACTTGGATTCTCGG
+		String f2 = "ttctcggggtactccgtcacggtgccggggagcgcaaggatcccctcaggtcttcccaagtgggcacagctggacctctg"
+				+ "gccggtgaaactcaccacccagaacgggaagaacatctacaacgcctggatctcccaggccctgaacggcaagcaggcag"
+				+ "gactggaccaggcggtcctgcccaaggactacgccccgggggctaaccgctggctcgcggacaacggcctgccggtgcgg"
+				+ "gtgacgggggcctacctgcgcgacttcgacacctccttcctcctgaacccctacatacccatcaccggccccatcgcctg"
+				+ "ggtgagctacacgcagtacacctggaccaacaacgggctgctcacggacaccatcgggaatagggatcttccggcggtgg"
+				+ "ttctgtacgacagcgcacagatacgtagcgggtcgtcctactacctccacaaggccccggcctaccgctaccgggtggtg"
+				+ "gagtactgggagtggtccggcaacttcgccacggtggacaacgggacggagcgtctttccccccgtccttttggtcccat"
+				+ "tgagatttaactcagggactactacgctctctccaacggggtgtggcgcatcagccgctagagggtggtga"; // AGTCAGTGCGTGC // F2 = ATCGGCATTCAGT // CAGCGTGG
 		
 		System.out.println("f1 : "+f1.length()+" f2 : "+f2.length());
 		if(f1.length() < f2.length()) { // Permet de toujours avoir le fragment le plus long sur les lignes

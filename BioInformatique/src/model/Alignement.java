@@ -19,12 +19,12 @@ public class Alignement {
 	public String alignementSemiGlobal(String f1, String f2) {
 		Matrice m = new Matrice(f1, f2);
 		Position maxPosition = m.calcul(f1, f2, GAP);
-		
+
 		if(maxPosition.getX() == m.getCountLigne() - 1) { // Si le maximum est sur la ligne
-			System.out.println("Le maximum est en ["+(m.getCountLigne() - 1)+"]["+maxPosition.getY()+"] (ligne)");
+			//System.out.println("Le maximum est en ["+(m.getCountLigne() - 1)+"]["+maxPosition.getY()+"] (ligne)");
 			return alignementLigne(f1, f2, m.getCountLigne() - 1, maxPosition.getY(), m.getMatrice());
 		} else { // Sinon le maximum est sur la colonne
-			System.out.println("Le maximum est en ["+maxPosition.getX()+"]["+(m.getCountColonne() - 1)+"] (colonne)");
+			//System.out.println("Le maximum est en ["+maxPosition.getX()+"]["+(m.getCountColonne() - 1)+"] (colonne)");
 			return alignementColonne(f1, f2, maxPosition.getX(), m.getCountColonne() - 1, m.getMatrice());
 		}
 	}
