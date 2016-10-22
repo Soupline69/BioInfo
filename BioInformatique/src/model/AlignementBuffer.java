@@ -1,19 +1,18 @@
 package model;
 
-public class Alignement {
+public class AlignementBuffer {
 	private final int GAP = -2;
 	private final int MATCH = 1;
 	private final int MISMATCH = -1;
-	private String f1;
-	private String f2;
+	private StringBuffer f1;
+	private StringBuffer f2;
 	private int score = 0;
 		
-	public Alignement(String f1, String f2) {
+	public AlignementBuffer(StringBuffer f1, StringBuffer f2) {	
 		this.f1 = f1;
 		this.f2 = f2;
 		
 		check();
-
 		alignementSemiGlobal();
 	}
 	
@@ -21,7 +20,7 @@ public class Alignement {
 	 * Aligne sur base de l'alignement semi-global les fragments f1 et f2
 	 */
 	public void alignementSemiGlobal() {
-		Matrice m = new Matrice(f1, f2);
+		MatriceBuffer m = new MatriceBuffer(f1, f2);
 		Position maxPosition = m.calcul(f1, f2, GAP);
 
 		if(maxPosition.getX() == m.getCountLigne() - 1) { // Si le maximum est sur la ligne
@@ -38,22 +37,18 @@ public class Alignement {
 	 */
 	public void alignementColonne(int ligne, int colonne, int[][] m) {
 		for(int i = 0; i < f1.substring(ligne).length(); i++) {
-			f2 = f2 + "_";
+			f2.append("_");
 		} 
-			
+		
 		while(colonne > 0 && ligne > 0) {
 			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.charAt(ligne - 1), f2.charAt(colonne - 1))) { // Si c'est un match ou un mismatch 
 				score += match(f1.charAt(ligne - 1), f2.charAt(colonne - 1));
 				ligne--;
 			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + GAP) { // Si c'est un gap de gauche
-				String localBegin = f1.substring(0, ligne);
-				String localEnd = f1.substring(ligne);
-				f1 = localBegin + "-" + localEnd;
+				f1.insert(ligne, "-");
 				score += GAP;
 			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + GAP) { // Si c'est un grap du haut
-				String localBegin = f2.substring(0, colonne);
-				String localEnd = f2.substring(colonne);
-				f2 = localBegin + "-" + localEnd;
+				f2.insert(colonne, "-");
 				score += GAP;
 				ligne--;
 				colonne++;
@@ -61,18 +56,18 @@ public class Alignement {
 			
 			colonne--;
 		}
-	
+			
 		if(ligne == 0 && colonne != 0) {
 			for(int i = 0; i < colonne; i++) {
-				f1 = "_" + f1;
+				f1.insert(0, "_");
 			}
 		}
 		
 		if(colonne == 0 && ligne != 0) {	
 			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
+				f2.insert(0, "_");
 			}
-		}	
+		}		
 	}
 	
 	/**
@@ -80,39 +75,35 @@ public class Alignement {
 	 */
 	public void alignementLigne(int ligne, int colonne, int[][] m) {
 		for(int i = 0; i < f2.substring(colonne).length(); i++) {
-			f1 = f1 + "_";
+			f1.append("_");
 		} 
-				
+						
 		while(colonne > 0 && ligne > 0) {
 			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.charAt(ligne - 1), f2.charAt(colonne - 1))) { // Si c'est un match ou un mismatch 
 				score += match(f1.charAt(ligne - 1), f2.charAt(colonne - 1));
 				colonne--;
+			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + GAP) { // Si c'est un gap du haut
+				f2.insert(colonne, "-");
+				score += GAP;
 			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + GAP) { // Si c'est un gap de gauche
-				String localBegin = f1.substring(0, ligne);
-				String localEnd = f1.substring(ligne);
-				f1 = localBegin + "-" + localEnd;
+				f1.insert(ligne, "-");
 				score += GAP;
 				colonne--;
 				ligne++;
-			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + GAP) { // Si c'est un gap du haut
-				String localBegin = f2.substring(0, colonne);
-				String localEnd = f2.substring(colonne);
-				f2 = localBegin + "-" + localEnd;
-				score += GAP;
-			} 
+			}
 			
 			ligne--;
 		}
 			
 		if(ligne == 0 && colonne != 0) {
 			for(int i = 0; i < colonne; i++) {
-				f1 = "_" + f1;
+				f1.insert(0, "_");
 			}
 		}
 		
 		if(colonne == 0 && ligne != 0) {	
 			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
+				f2.insert(0, "_");
 			}
 		}	
 	}
@@ -120,47 +111,39 @@ public class Alignement {
 	/**
 	 * Effectue le pré-traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
 	 */
-	public String preTraitement(String f1, String f2, int limite) {
-		String temp = f1.substring(limite);
+	public String preTraitement(StringBuffer f, int limite) {
+		String temp = f.substring(limite);
 		
+		StringBuffer pre = new StringBuffer();
 		for(int i = 0; i < temp.length(); i++) {
-			f2 = f2.concat("_");
+			pre.append("_");
 		} 
 		
-		return temp + "&" + f2;
-	}
-	
-	/**
-	 * Effectue le traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
-	 */
-	public String traitement(String temp, String f1, String f2, int ligne, int colonne) {
-		temp = f1.charAt(ligne) + temp;
-		String localBegin = f2.substring(0, colonne);
-		String localEnd = f2.substring(colonne);
-		f2 = localBegin + "-" + localEnd;
-		
-		return temp + "&" + f2;
+		return temp + "&" + pre;
 	}
 	
 	/**
 	 * Effectue le post-traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
 	 */
-	public String postTraitement(String temp, String f1, String f2, int ligne, int colonne) {
+	public String postTraitement(StringBuffer f1, StringBuffer f2, int ligne, int colonne) {
+		StringBuffer post = new StringBuffer();
+		
 		if(ligne == 0 && colonne != 0) {
 			for(int i = 0; i < colonne; i++) {
-				temp = "_" + temp;
+				post.append("_");
 			}
 		}
 		
+		StringBuffer postF2 = new StringBuffer();
 		if(colonne == 0 && ligne != 0) {
-			temp = f1.substring(0, ligne) + temp;
+			post.append(f1.substring(0, ligne));
 	
 			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
+				postF2.append("_");
 			}
 		}
 		
-		return temp + "&" + f2;
+		return postF2.length() == 0 ? post.toString() : post + "&" + postF2;
 	}
 	
 	/**
@@ -168,7 +151,7 @@ public class Alignement {
 	 */
 	public void check() {
 		if(f1.length() < f2.length()) { 
-			String tmp = f1;
+			StringBuffer tmp = f1;
 			f1 = f2;
 			f2 = tmp;
 		}
@@ -182,11 +165,11 @@ public class Alignement {
 		return a == b ? MATCH : MISMATCH;
 	}
 	
-	public String getF1() {
+	public StringBuffer getF1() {
 		return f1;
 	}
 	
-	public String getF2() {
+	public StringBuffer getF2() {
 		return f2;
 	}
 	

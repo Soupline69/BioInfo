@@ -5,7 +5,6 @@ public class Controller { // Au lieu du model on peut avoir la collection direct
 	
 	public Controller(Model model) {
 		this.model = model;
-		go();
 	}
 	
 	public void go() {
@@ -20,7 +19,7 @@ public class Controller { // Au lieu du model on peut avoir la collection direct
 		}
 		
 		/*String f1 = model.getCollection().getFragments().get(0);
-		String f2 = model.getCollection().getFragments().get(62); // 7, 39, 62
+		String f2 = model.getCollection().getFragments().get(3); // 7, 39, 62
 		
 		Alignement f1f2 = new Alignement(f1, f2);
 		System.out.println(f1f2.getF1());
