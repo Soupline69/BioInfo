@@ -8,26 +8,28 @@ import java.util.List;
 
 public class Reader {
 	
-	public static Collection getCollection(String file) {
-		return new Collection(getFragments(getBuffer(file)));
+	public static Graphe getGraphe(String file) {
+		return new Graphe(getFragments(getBuffer(file)));
 	}
 	
-	private static List<String> getFragments(BufferedReader buffer) {
-		List<String> fragments = new ArrayList<>();
+	private static List<Fragment> getFragments(BufferedReader buffer) {
+		List<Fragment> fragments = new ArrayList<>();
 		
 		Iterator<String> it = buffer.lines().iterator();
 		it.next();
+		String fragment = "";
 		while(it.hasNext()) {
-			String fragment = "";
 			String current = it.next();
 			
-			while(!current.startsWith(">") && it.hasNext()) {
-				fragment = fragment.concat(current);
-				current = it.next();
+			if(!current.startsWith(">")) {
+				fragment += current;
+			} else {
+				fragments.add(new Fragment(fragment));
+				fragment = "";
 			}
-				
-			fragments.add(fragment);
 		}
+		
+		fragments.add(new Fragment(fragment));
 		
 		return fragments;
 	}

@@ -1,49 +1,58 @@
 package model;
 
+import java.util.List;
+
 public class Matrice {
-	private int[][] m;
-	private int countLigne;
-	private int countColonne;
+	private static int[][] m;
+	private static Position maxPosition;
+	private static int score;
+	private static int sizeF1;
+	private static int sizeF2;
 	
-	public Matrice(String f1, String f2) {
-		countLigne = f1.length() + 1;
-		countColonne = f2.length() + 1;
-		m = new int[countLigne][countColonne];
+	public static void updateMatrice(List<ADN> f1, List<ADN> f2) {
+		update(f1, f2);
+		calcul(f1, f2);
+		getMaxScore(f1, f2);
 	}
 	
-	/** 
-	 * Calcul la matrice d'alignement semi-global entre les fragments f1 et f2 
-	 * Renvoie la position (ligne, colonne) du maximum sur la derniere ligne/colonne de la matrice
-	 */
-	public Position calcul(String f1, String f2, int gap) {
-		Position posMax = new Position(-1, -1);
-		int max = 0; 
+	public static void getMaxScore(List<ADN> f1, List<ADN> f2) {		
+		score = 0;
+		maxPosition = new Position(sizeF1 - 1, 0);
 		
-		for(int i = 1; i < countLigne; i++) {
-			for(int j = 1; j < countColonne; j++) {
-				m[i][j] = max(
-							m[i-1][j] + gap,
-							m[i][j-1] + gap,
-							m[i-1][j-1] + match(f1.charAt(i-1), f2.charAt(j-1))
-						);
-				
-				if(i == countLigne - 1 || j == countColonne - 1) { // si c'est la dernière ligne ou la dernière colonne, on peut déjà regardé où se trouve le maximum
-					if(m[i][j] > max) {
-						max = m[i][j];
-						posMax.setX(i);
-						posMax.setY(j);
-					}
+		for(int i = 1; i < sizeF1; i++) {
+			for(int j = 1; j < sizeF2; j++) {
+				if((i == f1.size() || j == f2.size()) && m[i][j] > score) { // si c'est la dernière ligne ou la dernière colonne, on peut déjà regardé où se trouve le maximum
+					score = m[i][j];
+					maxPosition.setX(i);
+					maxPosition.setY(j);
 				}
 			}
 		}
-		
-		return max == 0 ? new Position(countLigne - 1, 0) : posMax;
+	}
+	
+	public static void calcul(List<ADN> f1, List<ADN> f2) {
+		m = new int[sizeF1][sizeF2];
+
+		for(int i = 1; i < sizeF1; i++) {
+			for(int j = 1; j < sizeF2; j++) {
+				m[i][j] = max(
+							m[i-1][j] + ADN.GAP,
+							m[i][j-1] + ADN.GAP,
+							m[i-1][j-1] + match(f1.get(i-1), f2.get(j-1))
+				);
+			}
+		}	
+	}
+	
+	public static void update(List<ADN> f1, List<ADN> f2) {
+		sizeF1 = f1.size() + 1;
+		sizeF2 = f2.size() + 1;
 	}
 	
 	/**
 	 * Retourne le maximum entre a, b ou c
 	 */
-	private int max(int a, int b, int c) {
+	private static int max(int a, int b, int c) {
 		if(a >= b && a >= c) {
 			return a;
 		} else if(b >= a && b >= c) {
@@ -57,29 +66,19 @@ public class Matrice {
 	 * Retourne 1 si le caractère a est égal au caractère b (match)
 	 * Retourn - 1 sinon (mismatch)
 	 */
-	private int match(char a, char b) {
-		return a == b ? 1 : -1;
+	private static int match(ADN a, ADN b) {
+		return a == b ? ADN.MATCH : ADN.MISMATCH;
 	}
 	
-	public void display() {
-		for(int i = 0; i < countLigne; i++) {
-			for(int j = 0; j < countColonne; j++) {		
-				System.out.print(m[i][j]+"  ");
-			}
-			System.out.println("");
-		}
+	public static int getScore() {
+		return score;
 	}
 	
-	public int getCountLigne() {
-		return countLigne;
-	}
-	
-	public int getCountColonne() {
-		return countColonne;
-	}
-	
-	public int[][] getMatrice() {
+	public static int[][] getMatrice() {
 		return m;
 	}
 	
+	public static Position getMaxPosition() {
+		return maxPosition;
+	}
 }

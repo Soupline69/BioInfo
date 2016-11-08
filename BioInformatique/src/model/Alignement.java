@@ -1,60 +1,90 @@
 package model;
 
+import java.util.List;
+
 public class Alignement {
-	private final int GAP = -2;
-	private final int MATCH = 1;
-	private final int MISMATCH = -1;
-	private String f1;
-	private String f2;
+	private List<ADN> f1;
+	private List<ADN> f2;
+	private Position maxPosition;
 	private int score = 0;
 		
-	public Alignement(String f1, String f2) {
+	public Alignement(List<ADN> f1, List<ADN> f2) {
 		this.f1 = f1;
 		this.f2 = f2;
-		
-		check();
 
-		alignementSemiGlobal();
+		//check(); normalement ne sert à rien ! A vérifier avec les exemples que j'avais avant!!
+		getMaxScore();
 	}
 	
 	/** 
-	 * Aligne sur base de l'alignement semi-global les fragments f1 et f2
+	 * Crée la matrice d'alignement semi global,
+	 * Donne le score d'alignement semi global (sans faire l'alignement vu que l'on en aura peut etre pas besoin),
+	 * Donne la position où se trouve le maximum dans la matrice (pour faire l'alignement plus tard si besoin).
 	 */
-	public void alignementSemiGlobal() {
-		Matrice m = new Matrice(f1, f2);
-		Position maxPosition = m.calcul(f1, f2, GAP);
+	private void getMaxScore() {
+		int[][] m = calculMatrice();
 
-		if(maxPosition.getX() == m.getCountLigne() - 1) { // Si le maximum est sur la ligne
-			//System.out.println("Le maximum est en ["+(m.getCountLigne() - 1)+"]["+maxPosition.getY()+"] (ligne)");
-			alignementLigne(m.getCountLigne() - 1, maxPosition.getY(), m.getMatrice());
+		maxPosition = new Position(f1.size(), 0);
+
+		for(int i = 1; i < f1.size() + 1; i++) {
+			for(int j = 1; j < f2.size() + 1; j++) {
+				m[i][j] = max(
+							m[i-1][j] + ADN.GAP,
+							m[i][j-1] + ADN.GAP,
+							m[i-1][j-1] + match(f1.get(i-1), f2.get(j-1))
+				);
+				
+				if((i == f1.size() || j == f2.size()) && m[i][j] > score) { // si c'est la dernière ligne ou la dernière colonne, on peut déjà regardé où se trouve le maximum
+					score = m[i][j];
+					maxPosition.setX(i);
+					maxPosition.setY(j);
+				}
+			}
+		}
+	}
+	
+	private int[][] calculMatrice() {
+		int[][] m = new int[f1.size() + 1][f2.size() + 1];
+
+		for(int i = 1; i < f1.size() + 1; i++) {
+			for(int j = 1; j < f2.size() + 1; j++) {
+				m[i][j] = max(
+							m[i-1][j] + ADN.GAP,
+							m[i][j-1] + ADN.GAP,
+							m[i-1][j-1] + match(f1.get(i-1), f2.get(j-1))
+				);
+			}
+		}
+		
+		return m;
+	}
+	
+	public void alignementSemiGlobal() {
+		if(maxPosition.getX() == f1.size()) { // Si le maximum est sur la ligne
+			alignementLigne(f1.size(), maxPosition.getY(), calculMatrice());
 		} else { // Sinon le maximum est sur la colonne
-			//System.out.println("Le maximum est en ["+maxPosition.getX()+"]["+(m.getCountColonne() - 1)+"] (colonne)");
-			alignementColonne(maxPosition.getX(), m.getCountColonne() - 1, m.getMatrice());
+			alignementColonne(maxPosition.getX(), f2.size(), calculMatrice());
 		}
 	}
 	
 	/**
 	 * Aligne les fragments f1 et f2 si le maximum de la matrice (construite) est sur la dernière colonne de la matrice
 	 */
-	public void alignementColonne(int ligne, int colonne, int[][] m) {
-		for(int i = 0; i < f1.substring(ligne).length(); i++) {
-			f2 = f2 + "_";
+	private void alignementColonne(int ligne, int colonne, int[][] m) {
+		for(int i = 0; i < f1.size() - ligne; i++) {
+			f2.add(Lien.NONE);
 		} 
 			
 		while(colonne > 0 && ligne > 0) {
-			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.charAt(ligne - 1), f2.charAt(colonne - 1))) { // Si c'est un match ou un mismatch 
-				score += match(f1.charAt(ligne - 1), f2.charAt(colonne - 1));
+			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.get(ligne - 1), f2.get(colonne - 1))) { // Si c'est un match ou un mismatch 
+				//score += match(f1.get(ligne - 1), f2.get(colonne - 1));
 				ligne--;
-			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + GAP) { // Si c'est un gap de gauche
-				String localBegin = f1.substring(0, ligne);
-				String localEnd = f1.substring(ligne);
-				f1 = localBegin + "-" + localEnd;
-				score += GAP;
-			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + GAP) { // Si c'est un grap du haut
-				String localBegin = f2.substring(0, colonne);
-				String localEnd = f2.substring(colonne);
-				f2 = localBegin + "-" + localEnd;
-				score += GAP;
+			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + ADN.GAP) { // Si c'est un gap de gauche
+				f1.add(ligne, Lien.GAP); 
+				//score += ADN.GAP;
+			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + ADN.GAP) { // Si c'est un grap du haut
+				f2.add(colonne, Lien.GAP);
+				//score += ADN.GAP;
 				ligne--;
 				colonne++;
 			}
@@ -62,113 +92,70 @@ public class Alignement {
 			colonne--;
 		}
 	
-		if(ligne == 0 && colonne != 0) {
-			for(int i = 0; i < colonne; i++) {
-				f1 = "_" + f1;
-			}
-		}
-		
-		if(colonne == 0 && ligne != 0) {	
-			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
-			}
-		}	
+		postTraitement(ligne, colonne);
 	}
 	
 	/**
 	 * Aligne les fragments f1 et f2 si le maximum de la matrice (construite) est sur la dernière ligne de la matrice
 	 */
-	public void alignementLigne(int ligne, int colonne, int[][] m) {
-		for(int i = 0; i < f2.substring(colonne).length(); i++) {
-			f1 = f1 + "_";
+	private void alignementLigne(int ligne, int colonne, int[][] m) {
+		for(int i = 0; i < f2.size() - colonne; i++) {
+			f1.add(Lien.NONE);
 		} 
 				
 		while(colonne > 0 && ligne > 0) {
-			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.charAt(ligne - 1), f2.charAt(colonne - 1))) { // Si c'est un match ou un mismatch 
-				score += match(f1.charAt(ligne - 1), f2.charAt(colonne - 1));
+			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.get(ligne - 1), f2.get(colonne - 1))) { // Si c'est un match ou un mismatch 
+				//score += match(f1.get(ligne - 1), f2.get(colonne - 1));
 				colonne--;
-			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + GAP) { // Si c'est un gap de gauche
-				String localBegin = f1.substring(0, ligne);
-				String localEnd = f1.substring(ligne);
-				f1 = localBegin + "-" + localEnd;
-				score += GAP;
+			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + ADN.GAP) { // Si c'est un gap de gauche
+				f1.add(ligne, Lien.GAP);
+				//score += ADN.GAP;
 				colonne--;
 				ligne++;
-			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + GAP) { // Si c'est un gap du haut
-				String localBegin = f2.substring(0, colonne);
-				String localEnd = f2.substring(colonne);
-				f2 = localBegin + "-" + localEnd;
-				score += GAP;
+			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + ADN.GAP) { // Si c'est un gap du haut
+				f2.add(colonne, Lien.GAP);
+				//score += ADN.GAP;
 			} 
 			
 			ligne--;
 		}
 			
+		postTraitement(ligne, colonne);
+	}
+	
+	private void postTraitement(int ligne, int colonne) {
 		if(ligne == 0 && colonne != 0) {
 			for(int i = 0; i < colonne; i++) {
-				f1 = "_" + f1;
+				f1.add(0, Lien.NONE);
 			}
 		}
 		
 		if(colonne == 0 && ligne != 0) {	
 			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
+				f2.add(0, Lien.NONE);
 			}
 		}	
 	}
 	
 	/**
-	 * Effectue le pré-traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
+	 * Retourne le maximum entre a, b ou c
 	 */
-	public String preTraitement(String f1, String f2, int limite) {
-		String temp = f1.substring(limite);
-		
-		for(int i = 0; i < temp.length(); i++) {
-			f2 = f2.concat("_");
-		} 
-		
-		return temp + "&" + f2;
-	}
-	
-	/**
-	 * Effectue le traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
-	 */
-	public String traitement(String temp, String f1, String f2, int ligne, int colonne) {
-		temp = f1.charAt(ligne) + temp;
-		String localBegin = f2.substring(0, colonne);
-		String localEnd = f2.substring(colonne);
-		f2 = localBegin + "-" + localEnd;
-		
-		return temp + "&" + f2;
-	}
-	
-	/**
-	 * Effectue le post-traitement sur les deux fragments en fonction d'où se trouve le maximum dans la matrice
-	 */
-	public String postTraitement(String temp, String f1, String f2, int ligne, int colonne) {
-		if(ligne == 0 && colonne != 0) {
-			for(int i = 0; i < colonne; i++) {
-				temp = "_" + temp;
-			}
+	private int max(int a, int b, int c) {
+		if(a >= b && a >= c) {
+			return a;
+		} else if(b >= a && b >= c) {
+			return b;
+		} else {
+			return c;
 		}
-		
-		if(colonne == 0 && ligne != 0) {
-			temp = f1.substring(0, ligne) + temp;
-	
-			for(int i = 0; i < ligne; i++) {
-				f2 = "_" + f2;
-			}
-		}
-		
-		return temp + "&" + f2;
 	}
 	
 	/**
 	 * Permet de toujours avoir le fragment le plus long sur les lignes (f1 sera toujours plus long que f2)
 	 */
-	public void check() {
-		if(f1.length() < f2.length()) { 
-			String tmp = f1;
+	private void check() {
+		if(f1.size() < f2.size()) { 
+			List<ADN> tmp = f1;
 			f1 = f2;
 			f2 = tmp;
 		}
@@ -178,15 +165,15 @@ public class Alignement {
 	 * Retourne 1 si le caractère a est égal au caractère b (match)
 	 * Retourn - 1 sinon (mismatch)
 	 */
-	public int match(char a, char b) {
-		return a == b ? MATCH : MISMATCH;
+	private int match(ADN a, ADN b) {
+		return a == b ? ADN.MATCH : ADN.MISMATCH;
 	}
 	
-	public String getF1() {
+	public List<ADN> getF1() {
 		return f1;
 	}
 	
-	public String getF2() {
+	public List<ADN> getF2() {
 		return f2;
 	}
 	

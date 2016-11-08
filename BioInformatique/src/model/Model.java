@@ -1,14 +1,14 @@
 package model;
 
 public class Model {
-	private Collection collection;
+	private Graphe graphe;
 	
 	public Model(String file) {
-		this.collection = Reader.getCollection(file);
+		this.graphe = Reader.getGraphe(file);
 	}
 	
-	public Collection getCollection() {
-		return collection;
+	public Graphe getGraphe() {
+		return graphe;
 	}
 
 }
