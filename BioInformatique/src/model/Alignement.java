@@ -11,41 +11,34 @@ public class Alignement {
 	public Alignement(List<ADN> f1, List<ADN> f2) {
 		this.f1 = f1;
 		this.f2 = f2;
-
-		//check(); normalement ne sert à rien ! A vérifier avec les exemples que j'avais avant!!
-		getMaxScore();
+		maxPosition = new Position(0, 0);
 	}
 	
-	/** 
-	 * Crée la matrice d'alignement semi global,
-	 * Donne le score d'alignement semi global (sans faire l'alignement vu que l'on en aura peut etre pas besoin),
-	 * Donne la position où se trouve le maximum dans la matrice (pour faire l'alignement plus tard si besoin).
-	 */
-	private void getMaxScore() {
-		int[][] m = calculMatrice();
-
-		maxPosition = new Position(f1.size(), 0);
-
-		for(int i = 1; i < f1.size() + 1; i++) {
-			for(int j = 1; j < f2.size() + 1; j++) {
-				m[i][j] = max(
-							m[i-1][j] + ADN.GAP,
-							m[i][j-1] + ADN.GAP,
-							m[i-1][j-1] + match(f1.get(i-1), f2.get(j-1))
-				);
-				
-				if((i == f1.size() || j == f2.size()) && m[i][j] > score) { // si c'est la dernière ligne ou la dernière colonne, on peut déjà regardé où se trouve le maximum
-					score = m[i][j];
-					maxPosition.setX(i);
-					maxPosition.setY(j);
-				}
+	public Position score() {
+		int[][] m = getMatrice();
+		
+		for(int i = 1; i < f2.size() + 1; i++) {
+			if(m[f1.size()][i] >= score) {
+				score = m[f1.size()][i];
+				maxPosition.setX(f1.size());
+				maxPosition.setY(i);
 			}
 		}
+		
+		for(int j = 1; j < f1.size() + 1; j++) {
+			if(m[j][f2.size()] >= score) {
+				score = m[j][f2.size()];
+				maxPosition.setX(j);
+				maxPosition.setY(f2.size());
+			}
+		}
+		
+		return /*score;*/ maxPosition.getX() == f1.size() ? new Position(score, 1) : new Position(score, 0);
 	}
 	
-	private int[][] calculMatrice() {
+	public int[][] getMatrice() {
 		int[][] m = new int[f1.size() + 1][f2.size() + 1];
-
+		
 		for(int i = 1; i < f1.size() + 1; i++) {
 			for(int j = 1; j < f2.size() + 1; j++) {
 				m[i][j] = max(
@@ -59,11 +52,17 @@ public class Alignement {
 		return m;
 	}
 	
+	/** 
+	 * Crée la matrice d'alignement semi global,
+	 * Donne le score d'alignement semi global (sans faire l'alignement vu que l'on en aura peut etre pas besoin),
+	 * Donne la position où se trouve le maximum dans la matrice (pour faire l'alignement plus tard si besoin).
+	 */
+	
 	public void alignementSemiGlobal() {
 		if(maxPosition.getX() == f1.size()) { // Si le maximum est sur la ligne
-			alignementLigne(f1.size(), maxPosition.getY(), calculMatrice());
+			alignementLigne(f1.size(), maxPosition.getY(), getMatrice());
 		} else { // Sinon le maximum est sur la colonne
-			alignementColonne(maxPosition.getX(), f2.size(), calculMatrice());
+			alignementColonne(maxPosition.getX(), f2.size(), getMatrice());
 		}
 	}
 	
