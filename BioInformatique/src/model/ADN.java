@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Représente un nucléobase ou un lien
+ */
 public interface ADN {
 	public final int GAP = -2;
 	public final int MATCH = 1;

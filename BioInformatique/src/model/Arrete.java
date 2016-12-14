@@ -1,13 +1,23 @@
 package model;
 
+/**
+ * Représente une arrête du graphe
+ */
 public class Arrete implements Comparable<Arrete> {
 	private int debut;
 	private int fin;
-	private int score;
+	private Score score;
 	private boolean debutInverse;
 	private boolean finInverse;
 	
-	public Arrete(int debut, int fin, int score, boolean debutInverse, boolean finInverse) {
+	/**
+	 * Constructeur spécial (lié à la méthode 'equals') permettant de trouver la position d'une arrête dans une liste d'arrête en ne connaissant que le fragment de début
+	 */
+	public Arrete(int debut) {
+		this.debut = debut;
+	}
+	
+	public Arrete(int debut, int fin, Score score, boolean debutInverse, boolean finInverse) {
 		this.debut = debut;
 		this.fin = fin;
 		this.score = score;
@@ -23,10 +33,10 @@ public class Arrete implements Comparable<Arrete> {
 		return fin;
 	}
 
-	public int getScore() {
+	public Score getScore() {
 		return score;
 	}
-
+	
 	public boolean isDebutInverse() {
 		return debutInverse;
 	}
@@ -39,7 +49,7 @@ public class Arrete implements Comparable<Arrete> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + score;
+		result = prime * result + debut;
 		return result;
 	}
 
@@ -52,14 +62,14 @@ public class Arrete implements Comparable<Arrete> {
 		if (getClass() != obj.getClass())
 			return false;
 		Arrete other = (Arrete) obj;
-		if (score != other.score)
+		if (debut != other.debut)
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public int compareTo(Arrete toCompare) {
-		return score > toCompare.getScore() ? -1 : score < toCompare.getScore() ? 1 : 0; 
+		return score.compareTo(toCompare.getScore());
 	}
 
 }

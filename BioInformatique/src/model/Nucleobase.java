@@ -1,5 +1,10 @@
 package model;
 
+import java.util.Random;
+
+/**
+ * Représente un nucléobase qui peut être A, T, C, G
+ */
 public enum Nucleobase implements ADN {
     A, C, G, T;
 
@@ -14,10 +19,28 @@ public enum Nucleobase implements ADN {
 	        	return 'g';
 	        case T:
 	        	return 't';
-	        default:
+	        default :
 	        	return 0;
 		}
 	}
+    
+    /**
+     * Retourne un nucléobase au hasard
+     */
+    public static char random() {
+    	int i = new Random().nextInt(4);
+    	
+    	switch (i) {
+	    	case 0 : 
+	    		return 'a';
+	    	case 1 : 
+	    		return 't';
+	    	case 2 : 
+	    		return 'c';
+	    	default :
+	    		return 'g';
+    	}
+    }
     
     @Override
     public String toString() {
