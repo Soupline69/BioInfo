@@ -1,16 +1,16 @@
 package model;
 
 /**
- * Représente un nucléobase ou un lien
+ * Represente un nucleobase ou un lien
  */
 public interface ADN {
-	public final int GAP = -2;
-	public final int MATCH = 1;
-	public final int MISMATCH = -1;
+	int GAP = -2;
+	int MATCH = 1;
+	int MISMATCH = -1;
 	
     char toChar();
 	
-	public static ADN fromChar(char c) {
+	static ADN fromChar(char c) {
         switch (c) {
         case 'a':
             return Nucleobase.A;
@@ -25,11 +25,11 @@ public interface ADN {
         case '_':
             return Lien.NONE;
         default:
-            throw new IllegalArgumentException("Représentation d'ADN inconnue : " + c);
+            throw new IllegalArgumentException("Representation d'ADN inconnue : " + c);
         }
     }
 	
-	public static ADN complementaire(char c) {
+	static ADN complementaire(char c) {
 		switch(c) {
 		case 'a':
 			return Nucleobase.T;

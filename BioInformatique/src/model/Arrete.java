@@ -1,9 +1,9 @@
 package model;
 
 /**
- * Représente une arrête du graphe
+ * Represente une arrete du graphe
  */
-public class Arrete implements Comparable<Arrete> {
+class Arrete implements Comparable<Arrete> {
 	private int debut;
 	private int fin;
 	private Score score;
@@ -11,7 +11,7 @@ public class Arrete implements Comparable<Arrete> {
 	private boolean finInverse;
 	
 	/**
-	 * Constructeur spécial (lié à la méthode 'equals') permettant de trouver la position d'une arrête dans une liste d'arrête en ne connaissant que le fragment de début
+	 * Constructeur special (lie a la methode 'equals') permettant de trouver la position d'une arrete dans une liste d'arrete en ne connaissant que le fragment de debut
 	 */
 	public Arrete(int debut) {
 		this.debut = debut;
@@ -33,7 +33,7 @@ public class Arrete implements Comparable<Arrete> {
 		return fin;
 	}
 
-	public Score getScore() {
+	private Score getScore() {
 		return score;
 	}
 	
@@ -62,9 +62,7 @@ public class Arrete implements Comparable<Arrete> {
 		if (getClass() != obj.getClass())
 			return false;
 		Arrete other = (Arrete) obj;
-		if (debut != other.debut)
-			return false;
-		return true;
+		return debut == other.debut;
 	}
 	
 	@Override

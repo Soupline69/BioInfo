@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Représente un 'lien' qui peut être un gap (-) ou un none (_) qui est un gap de début ou de fin mais qui n'est pas pénalisé contrairement au gap
+ * Represente un 'lien' qui peut etre un gap (-) ou un none (_) qui est un gap de debut ou de fin mais qui n'est pas penalise contrairement au gap
  */
 public enum Lien implements ADN {
     GAP, NONE;

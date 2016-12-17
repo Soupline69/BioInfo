@@ -3,16 +3,16 @@ package model;
 import java.util.List;
 
 /**
- * Représente un alignement semi-global entre un fragment f1 et un fragment f2
+ * Represente un alignement semi-global entre un fragment f1 et un fragment f2
  */
-public class Alignement {
+class Alignement {
 	private List<ADN> f1;
 	private int sizeF1;
 	private List<ADN> f2;
 	private int sizeF2;
 	private int debutAlignementF1;
-	private int debutAlignementF2;
 	private int finAlignementF1;
+	private int debutAlignementF2;
 	private int finAlignementF2;
 	private int debutChevauchement;
 	private int finChevauchement;
@@ -25,7 +25,7 @@ public class Alignement {
 	}
 	
 	/**
-	 * Retourne la Pair de score maximum (sur la dernière ligne et sur la dernière colonne) de la matrice m
+	 * Retourne la Pair de score maximum (sur la derniere ligne et sur la derniere colonne) de la matrice m
 	 */
 	public Pair score() {		
 		int[][] m = getMatrice();
@@ -56,10 +56,10 @@ public class Alignement {
 	}
 	
 	/**
-	 * Retourne le Score maximum sur la dernière ligne de la matrice m
+	 * Retourne le Score maximum sur la derniere ligne de la matrice m
 	 */
 	private Score maxLigne(int[][] m) {
-		Score ligne = new Score(0, 0);
+		Score ligne = new Score();
 
 		for(int i = 1; i < sizeF2 + 1; i++) {
 			if(m[sizeF1][i] >= ligne.getScore()) {
@@ -72,10 +72,10 @@ public class Alignement {
 	}
 	
 	/**
-	 * Retourne le Score maximum sur la dernière colonne de la matrice m
+	 * Retourne le Score maximum sur la derniere colonne de la matrice m
 	 */
 	private Score maxColonne(int[][] m) {
-		Score colonne = new Score(0, 0);
+		Score colonne = new Score();
 		
 		for(int i = 1; i < sizeF1 + 1; i++) {
 			if(m[i][sizeF2] >= colonne.getScore()) {
@@ -92,7 +92,7 @@ public class Alignement {
 	 */
 	public void alignementSemiGlobal() {
 		int[][] m = getMatrice();
-		Pair score = new Pair(maxLigne(m), maxColonne(m));
+		Pair score = score();
 
 		if(score.getLigne().getScore() >= score.getColonne().getScore()) {
 			alignementLigne(sizeF1, score.getLigne().getChevauchement(), m);
@@ -102,16 +102,16 @@ public class Alignement {
 	}
 	
 	/**
-	 * Aligne les fragments f1 et f2 si le maximum de la matrice est sur la dernière ligne de la matrice
+	 * Aligne les fragments f1 et f2 si le maximum de la matrice est sur la derniere ligne de la matrice
 	 * 1. Ajouter des gaps de fin sur le fragment f1 (ligne)
-	 * 2. Tant que l'on est pas arrivé sur la première ligne ou la première colonne de la matrice
+	 * 2. Tant que l'on est pas arrive sur la premiere ligne ou la premiere colonne de la matrice
 	 * 		2.1. On regarde si on a un match ou un mismatch 
 	 * 		2.2. On regarde s'il ne faut pas mettre un gap sur le fragment f1 (ligne)
 	 * 		2.3. On regarde s'il ne faut pas mettre un gap sur le fragment f2 (colonne)
-	 * 3. Si on est arrivé sur la première ligne de la matrice 
-	 * 		3.1. On ajoute des gaps de début au fragment f1 (ligne) 
-	 * 	  Si on est arrivé sur la première colonne de la matrice
-	 * 		3.2. On ajoute des gaps de début au fragment f2 (colonne)
+	 * 3. Si on est arrive sur la premiï¿½re ligne de la matrice 
+	 * 		3.1. On ajoute des gaps de debut au fragment f1 (ligne) 
+	 * 	  Si on est arrive sur la premiere colonne de la matrice
+	 * 		3.2. On ajoute des gaps de debut au fragment f2 (colonne)
 	 */
 	private void alignementLigne(int ligne, int colonne, int[][] m) {	
 		finAlignementF2 = pretraitement(sizeF2, colonne, f1, finAlignementF2);
@@ -138,27 +138,27 @@ public class Alignement {
 	}
 	
 	/**
-	 * Aligne les fragments f1 et f2 si le maximum de la matrice est sur la dernière colonne de la matrice
+	 * Aligne les fragments f1 et f2 si le maximum de la matrice est sur la derniere colonne de la matrice
 	 *  1. Ajouter des gaps de fin sur le fragment f2 (colonne)
-	 *  2. Tant que l'on est pas arrivé sur la première ligne ou la première colonne de la matrice
+	 *  2. Tant que l'on est pas arrive sur la premiere ligne ou la premiere colonne de la matrice
 	 * 		2.1. On regarde si on a un match ou un mismatch 
 	 * 		2.2. On regarde s'il ne faut pas mettre un gap sur le fragment f1 (ligne)
 	 * 		2.3. On regarde s'il ne faut pas mettre un gap sur le fragment f2 (colonne)
-	 * 3. Si on est arrivé sur la première ligne de la matrice 
-	 * 		3.1. On ajoute des gaps de début au fragment f1 (ligne) 
-	 * 	  Si on est arrivé sur la première colonne de la matrice
-	 * 		3.2. On ajoute des gaps de début au fragment f2 (colonne)
+	 * 3. Si on est arrive sur la premiere ligne de la matrice 
+	 * 		3.1. On ajoute des gaps de debut au fragment f1 (ligne) 
+	 * 	  Si on est arrive sur la premiere colonne de la matrice
+	 * 		3.2. On ajoute des gaps de debut au fragment f2 (colonne)
 	 */
 	private void alignementColonne(int ligne, int colonne, int[][] m) {		
 		finAlignementF1 = pretraitement(sizeF1, ligne, f2, finAlignementF1);
 					
 		while(colonne > 0 && ligne > 0) {
-			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.get(ligne - 1), f2.get(colonne - 1))) { // Si c'est un match ou un mismatch 
+			if(m[ligne][colonne] == m[ligne - 1][colonne - 1] + match(f1.get(ligne - 1), f2.get(colonne - 1))) { 
 				ligne--;
-			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + ADN.GAP) { // Si c'est un gap de gauche
+			} else if(m[ligne][colonne] == m[ligne][colonne - 1] + ADN.GAP) { 
 				f1.add(ligne, Lien.GAP); 
 				sizeF1++;
-			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + ADN.GAP) { // Si c'est un gap du haut
+			} else if(m[ligne][colonne] == m[ligne - 1][colonne] + ADN.GAP) { 
 				f2.add(colonne, Lien.GAP);
 				sizeF2++;
 				ligne--;
@@ -174,7 +174,7 @@ public class Alignement {
 	}
 	
 	/**
-	 * Ajoute des gaps à la fin du fragment f
+	 * Ajoute des gaps a la fin du fragment f
 	 */
 	private int pretraitement(int size, int soustraction, List<ADN> f, int finAlignement) {
 		for(int i = 0; i < size - soustraction; i++) {
@@ -186,7 +186,7 @@ public class Alignement {
 	}
 	
 	/**
-	 * Ajoute des gaps au début des fragments f1 et f2 si les conditions sont satisfaites
+	 * Ajoute des gaps au debut des fragments f1 et f2 si les conditions sont satisfaites
 	 */
 	private void postTraitement(int ligne, int colonne) {
 		if(ligne == 0 && colonne != 0) {
@@ -222,9 +222,9 @@ public class Alignement {
 	}
 	
 	/**
-	 * Met à jour les attributs : debutAlignementF1, finAlignementF1, debutAlignementF2, finAlignementF2, debutChevauchement, finChevauchement en fonction du paramètre
+	 * Met a jour les attributs : debutAlignementF1, finAlignementF1, debutAlignementF2, finAlignementF2, debutChevauchement, finChevauchement en fonction du parametre
 	 * update
-	 * @param update correspond à la position où commence l'alignement
+	 * @param update correspond a la position ou commence l'alignement
 	 */
 	public void update(int update) {
 		debutAlignementF1 += update;
@@ -236,9 +236,9 @@ public class Alignement {
 	}
 	
 	/**
-	 * Lorsque les fragments sont alignés deux à deux, il est possible de devoir propager un gap vers le haut ou le bas
-	 * Il faut donc mettre à jour les valeurs des différents attributs en fonction de la position du gap
-	 * @param gap correspond à la position du gap qui a été propagé
+	 * Lorsque les fragments sont alignes deux a deux, il est possible de devoir propager un gap vers le haut ou le bas
+	 * Il faut donc mettre a jour les valeurs des differents attributs en fonction de la position du gap
+	 * @param gap correspond a la position du gap qui a ete propage
 	 */
 	public void increment(int gap) {
 		if(gap <= debutAlignementF1) {
@@ -271,11 +271,18 @@ public class Alignement {
 	}
 	
 	/**
-	 * Retourne 1 si le caractère a est égal au caractère b (match)
+	 * Retourne 1 si le caractere a est egal au caractere b (match)
 	 * Retourne - 1 sinon (mismatch)
 	 */
 	private int match(ADN a, ADN b) {
 		return a == b ? ADN.MATCH : ADN.MISMATCH;
+	}
+	
+	/**
+	 * retourne si f1 commence avant f2
+	 */
+	public boolean f1AvantF2() {
+		return debutAlignementF1 <= debutAlignementF2;
 	}
 	
 	public List<ADN> getF1() {
@@ -290,7 +297,7 @@ public class Alignement {
 		return Math.max(debutAlignementF1, debutAlignementF2);
 	}
 	
-	public int getFinChevauchement() {
+	private int getFinChevauchement() {
 		return Math.min(finAlignementF1, finAlignementF2);
 	}
 	

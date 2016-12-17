@@ -1,9 +1,9 @@
 package model;
 
 /**
- * Représente une paire de score qui est utilisé pour récupérer :
- * - Le score maximum de la dernière ligne de la matrice
- * - Le score maximum de la dernière colonne de la matrice
+ * Represente une paire de score qui est utilise pour recuperer :
+ * - Le score maximum de la derniere ligne de la matrice
+ * - Le score maximum de la derniere colonne de la matrice
  */
 public class Pair {
 	  private Score ligne;

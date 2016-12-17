@@ -1,19 +1,20 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Représente un noeud du graphe
+ * Represente un noeud du graphe
  */
-public class Fragment {  
+class Fragment {
 	private List<ADN> value;
 	private List<ADN> inverse;
 	private int isInverse;
 	private boolean in;
 	private boolean out;
 	
-	public Fragment(CharSequence nucleobases) {
+	public Fragment(String nucleobases) {
 		value = new ArrayList<>(nucleobases.length());
 		inverse = new ArrayList<>(nucleobases.length());
 
@@ -38,14 +39,16 @@ public class Fragment {
 	}
 	
 	/**
-	 * Si un fragment est inversé/complémenté alors sa valeur devient la valeur inverse/complémenté (ce qui nous permet de juste utilisé la méthode 'getValue()' pour les alignements)
+	 * Si un fragment est inverse/complemente alors sa valeur devient la valeur inverse/complemente (ce qui nous permet de juste utilise la methode 'getValue()' pour les alignements)
 	 */
 	public void setIsInverse(int isInverse) {
 		this.isInverse = isInverse;
 		
 		if(isInverse == 1) {
-			value = inverse;
+			Collections.copy(value, inverse);
 		}
+		
+	    inverse.clear();
 	}
 	
 	public boolean in() {

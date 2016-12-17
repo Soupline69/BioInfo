@@ -1,16 +1,16 @@
 package model;
 
 /**
- * Représente un score maximum (de la dernière ligne ou la dernière colonne) de la matrice d'alignement
- * Afin de maximiser le chevauchement entre deux fragments, un attribut 'chevauchement' a été ajouté afin de départager deux arrêtes de même score
+ * Represente un score maximum (de la derniere ligne ou la derniere colonne) de la matrice d'alignement
+ * Afin de maximiser le chevauchement entre deux fragments, un attribut 'chevauchement' a ete ajoute afin de departager deux arretes de meme score
  */
 public class Score implements Comparable<Score> {
 	private int score;
 	private int chevauchement;
 	
-	public Score(int score, int chevauchement) {
-		this.score = score;
-		this.chevauchement = chevauchement;
+	public Score() {
+		this.score = 0;
+		this.chevauchement = 0;
 	}
 	
 	public int getScore() {
@@ -49,9 +49,7 @@ public class Score implements Comparable<Score> {
 		Score other = (Score) obj;
 		if (chevauchement != other.chevauchement)
 			return false;
-		if (score != other.score)
-			return false;
-		return true;
+		return score == other.score;
 	}
 
 	@Override

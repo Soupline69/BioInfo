@@ -1,18 +1,18 @@
 package model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Permet de lire un fichier .fasta et d'écrire les résultats dans deux fichiers .fasta
+ * Permet de lire un fichier .fasta et d'ecrire les resultats dans deux fichiers .fasta
  */
-public class Parser {
+class Parser {
+	
+	private Parser() {
+		
+	}
 	
 	public static List<Fragment> getFragments(String file) {
 		BufferedReader buffer = getBufferReader(file);
@@ -21,20 +21,24 @@ public class Parser {
 		
 		Iterator<String> it = buffer.lines().iterator();
 		it.next();
-		String fragment = "";
+		StringBuilder fragment = new StringBuilder();
 		while(it.hasNext()) {
 			String current = it.next();
 			
 			if(!current.startsWith(">")) {
-				fragment += current;
+				fragment.append(current);
 			} else {
-				fragments.add(new Fragment(fragment));
-				fragment = "";
+				fragments.add(new Fragment(fragment.toString()));
+				fragment = new StringBuilder();
 			}
 		}
 		
-		fragments.add(new Fragment(fragment));
-			
+		fragments.add(new Fragment(fragment.toString()));
+		
+		try {
+			buffer.close();
+		} catch (IOException e) {}	
+		
 		return fragments;
 	}
 	
@@ -59,9 +63,7 @@ public class Parser {
 			
 			bufferNormal.close();
 			bufferInverse.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 	}
 	
 	private static String getNomCollection(String file) {
@@ -74,7 +76,7 @@ public class Parser {
 		
         try {
 			buffer = new BufferedReader(new FileReader(file));
-        } catch(Exception e) {}
+        } catch(Exception ignored) {}
         
         return buffer;
     }
@@ -84,7 +86,7 @@ public class Parser {
 		
         try {
 			buffer = new BufferedWriter(new FileWriter(file));
-        } catch(Exception e) {}
+        } catch(Exception ignored) {}
         
         return buffer;
 	}

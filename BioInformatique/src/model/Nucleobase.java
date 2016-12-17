@@ -3,7 +3,7 @@ package model;
 import java.util.Random;
 
 /**
- * Représente un nucléobase qui peut être A, T, C, G
+ * Represente un nucleobase qui peut etre A, T, C, G
  */
 public enum Nucleobase implements ADN {
     A, C, G, T;
@@ -25,7 +25,7 @@ public enum Nucleobase implements ADN {
 	}
     
     /**
-     * Retourne un nucléobase au hasard
+     * Retourne un nucleobase au hasard
      */
     public static char random() {
     	int i = new Random().nextInt(4);

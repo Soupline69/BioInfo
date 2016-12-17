@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Représente le graphe 
+ * Represente le graphe 
  */
-public class Graphe {
+class Graphe {
 	private List<Fragment> noeuds;
 	private List<Arrete> arretes;
 	
@@ -56,9 +56,8 @@ public class Graphe {
 		
 		Collections.swap(cheminHamilton, 0, cheminHamilton.indexOf(new Arrete(out.get(0))));
 		
-		System.out.println("Le chemin hamiltonien a été calculé "+cheminHamilton.size()+" flèches choisies sur "+arretes.size());
+		System.out.println("Le chemin hamiltonien a ete calcule "+cheminHamilton.size()+" fleches choisies sur "+arretes.size());
 		arretes.clear();
-		System.out.println(arretes.size());
 		return cheminHamilton;
 	}
 	
@@ -105,10 +104,10 @@ public class Graphe {
 	}
 	
 	/**
-	 * Détermine si le fragment sera la première ou non.
+	 * Determine si le fragment sera la premiere ou non.
 	 * Un fragment est le premier si son attribut 'out' est vrai et son attribut 'in' est faux.
-	 * Pour ne pas refaire une boucle for sur toutes les arrêtes du chemin hamiltonien, une vérification est faite lors de l'ajout de l'arrête dans le chemin hamiltonien, 
-	 * à l'aide de deux listes 'in' et 'out'. Si un fragment est dans les deux listes, il ne sera surement pas le premier.
+	 * Pour ne pas refaire une boucle for sur toutes les arretes du chemin hamiltonien, une verification est faite lors de l'ajout de l'arrete dans le chemin hamiltonien, 
+	 * a l'aide de deux listes 'in' et 'out'. Si un fragment est dans les deux listes, il ne sera surement pas le premier.
 	 */
 	private void isPremiereArrete(List<Integer> e1, List<Integer> e2, int fragment) {
 		if(e1.contains(fragment)) {
@@ -118,11 +117,11 @@ public class Graphe {
 	}
 	
 	/**
-	 * Détermine si les fragments sont de la bonnes formes :
-	 * - Si le fragment n'est pas encore choisi alors il sera inversé/complémenté ou non en fonction de la valeur debutInverse/finInverse
-	 * - Si le fragment a déjà été choisi alors 
-	 * 		- s'il est inversé/complémenté la valeur de debutInverse/finInverse doit être true
-	 * 		- s'il est normal la valeur de debutInverse/finInverse doit être false
+	 * Determine si les fragments sont de la bonnes formes :
+	 * - Si le fragment n'est pas encore choisi alors il sera inverse/complemente ou non en fonction de la valeur debutInverse/finInverse
+	 * - Si le fragment a deja ete choisi alors 
+	 * 		- s'il est inverse/complemente la valeur de debutInverse/finInverse doit etre true
+	 * 		- s'il est normal la valeur de debutInverse/finInverse doit etre false
 	 */
 	private boolean fragmentsCorrects(int debut, boolean debutInverse, int fin, boolean finInverse) {
 		return bonneForme(debut, debutInverse) && bonneForme(fin, finInverse);
